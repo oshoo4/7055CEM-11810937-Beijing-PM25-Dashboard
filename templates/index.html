@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Beijing PM2.5 Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+    <style>
+        .plot-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Beijing PM2.5 Dashboard</h1>
+        <p>I got this Data Originally from Beijing CSV Included in <a href="https://archive.ics.uci.edu/dataset/394/pm2+5+data+of+five+chinese+cities" target="_blank">PM2.5 Data of Five Chinese Cities in</a> UCI Machine Learning Repository.</p>
+
+        <form method="POST">
+            <label for="pm_selection">Select PM2.5 Data:</label>
+            <select name="pm_selection" id="pm_selection" onchange="this.form.submit()">
+                <option value="PM_1" {% if pm_selection == 'PM_1' %}selected{% endif %}>PM_1</option>
+                <option value="PM_2" {% if pm_selection == 'PM_2' %}selected{% endif %}>PM_2</option>
+                <option value="PM_3" {% if pm_selection == 'PM_3' %}selected{% endif %}>PM_3</option>
+                <option value="PM_4" {% if pm_selection == 'PM_4' %}selected{% endif %}>PM_4</option>
+                <option value="PM_Average" {% if pm_selection == 'PM_Average' %}selected{% endif %}>PM_Average</option>
+            </select>
+        </form>
+
+        <h2>Time-Series Plot</h2>
+        <div id="pm_plot" class="plot-container"></div>
+        <script>
+            (function() {
+                var pm_plot_data = {{ pm_plot_json | safe }};
+                Plotly.newPlot('pm_plot', pm_plot_data.data, pm_plot_data.layout);
+            })();
+        </script>
+
+        <h2>Histogram</h2>
+        <div id="pm_hist" class="plot-container"></div>
+        <script>
+            (function() {
+                var pm_hist_data = {{ pm_hist_json | safe }};
+                Plotly.newPlot('pm_hist', pm_hist_data.data, pm_hist_data.layout);
+            })();
+        </script>
+
+        <h2>Scatter Plots</h2>
+        {% for var, plot_json in scatter_plots.items() %}
+            <h3>PM2.5 vs. {{ var }}</h3>
+            <div id="scatter_{{ var }}" class="plot-container"></div>
+            <script>
+                (function() {
+                    var plotData = {{ plot_json | safe }};
+                    Plotly.newPlot('scatter_{{ var }}', plotData.data, plotData.layout);
+                })();
+            </script>
+        {% endfor %}
+
+        <h2>Heatmap</h2>
+        <div id="pm_heatmap" class="plot-container"></div>
+        <script>
+            (function() {
+                var pm_heatmap_data = {{ pm_heatmap_json | safe }};
+                Plotly.newPlot('pm_heatmap', pm_heatmap_data.data, pm_heatmap_data.layout);
+            })();
+        </script>
+    </div>
+</body>
+</html>
