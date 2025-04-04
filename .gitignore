@@ -9,3 +9,5 @@ data/
 *.csv
 
 *.pyc
+
+.vscode/
