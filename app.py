@@ -16,7 +16,6 @@ db = client[DATABASE_NAME]
 collection = db[COLLECTION_NAME]
 
 def load_data_from_mongodb():
-    """Loads data from MongoDB."""
     try:
         cursor = collection.find({})
         data = pd.DataFrame(list(cursor))
@@ -129,4 +128,4 @@ def index():
                            pm_selection=pm_selection)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
